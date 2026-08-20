@@ -17,6 +17,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useLearning } from '../context/LearningContext';
 import { Badge } from '../components/common/Badge';
+import { DigiLockerButton } from '../components/common/DigiLockerButton';
 
 export const Profile = ({ onOpenCertificatePreview, onNavigate }) => {
   const { user } = useAuth();
@@ -324,14 +325,19 @@ export const Profile = ({ onOpenCertificatePreview, onNavigate }) => {
                 </p>
               </div>
 
-              <div style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>
+              <div style={{ marginTop: '16px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <DigiLockerButton
+                  certificate={cert}
+                  size="sm"
+                  style={{ flex: 1 }}
+                />
                 <button
                   onClick={() => onOpenCertificatePreview(cert)}
-                  className="btn btn-primary btn-sm"
+                  className="btn btn-secondary btn-sm"
                   style={{ flex: 1 }}
                 >
                   <ExternalLink size={14} />
-                  View Credential
+                  View Preview
                 </button>
               </div>
             </div>

@@ -23,6 +23,14 @@ const getVerifyBaseUrl = () => {
   return `${apiBase}/verify`;
 };
 
+const getDigiLockerUrl = () => {
+  const envUrl = import.meta.env.VITE_DIGILOCKER_URL;
+  if (envUrl && envUrl.trim()) {
+    return envUrl.trim().replace(/\/+$/, '');
+  }
+  return 'http://localhost:3000';
+};
+
 // Storage helper functions
 export const getStoredCertificates = () => {
   try {
@@ -45,6 +53,64 @@ export const saveStoredCertificates = (certs) => {
 export const secureVaultApi = {
   getApiBaseUrl,
   getVerifyBaseUrl,
+  getDigiLockerUrl,
+
+  /**
+   * Constructs the DigiLocker import URL containing all certificate metadata query params
+   */
+  getDigiLockerImportUrl: (certificate) => {
+    if (!certificate) return '';
+    const baseUrl = getDigiLockerUrl();
+    const params = new URLSearchParams();
+
+    // Collect all certificate metadata returned from SecureVault:
+    // - certificateId
+    // - studentName
+    // - courseName
+    // - certificateUrl
+    // - hash
+    // - ipfsCID
+    // - issueDate
+    // - verificationUrl
+    if (certificate.certificateId) {
+      params.set('certificateId', certificate.certificateId);
+    }
+    if (certificate.studentName || certificate.learnerName) {
+      params.set('studentName', certificate.studentName || certificate.learnerName);
+    }
+    if (certificate.courseTitle || certificate.courseName || certificate.course) {
+      params.set('courseName', certificate.courseTitle || certificate.courseName || certificate.course);
+    }
+    if (certificate.certificateUrl) {
+      params.set('certificateUrl', certificate.certificateUrl);
+    }
+    if (certificate.hash || certificate.signatureHash) {
+      params.set('hash', certificate.hash || certificate.signatureHash);
+    }
+    if (certificate.ipfsCID) {
+      params.set('ipfsCID', certificate.ipfsCID);
+    }
+    if (certificate.issueDate || certificate.rawIssueDate) {
+      params.set('issueDate', certificate.issueDate || certificate.rawIssueDate);
+    }
+    if (certificate.verificationUrl) {
+      params.set('verificationUrl', certificate.verificationUrl);
+    }
+
+    return `${baseUrl}/import-certificate?${params.toString()}`;
+  },
+
+  /**
+   * Redirect user to DigiLocker with loading callback
+   */
+  redirectToDigiLocker: (certificate, onStart) => {
+    if (!certificate) return;
+    const targetUrl = secureVaultApi.getDigiLockerImportUrl(certificate);
+    if (onStart) onStart();
+    setTimeout(() => {
+      window.location.href = targetUrl;
+    }, 700);
+  },
 
   /**
    * Generates a dynamic certificate via SecureVault backend:

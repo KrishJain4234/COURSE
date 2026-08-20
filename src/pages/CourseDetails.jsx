@@ -25,6 +25,7 @@ import { useLearning } from '../context/LearningContext';
 import { useAuth } from '../context/AuthContext';
 import { ProgressBar } from '../components/common/ProgressBar';
 import { Badge } from '../components/common/Badge';
+import { DigiLockerButton } from '../components/common/DigiLockerButton';
 
 export const CourseDetails = ({
   courseId,
@@ -200,7 +201,7 @@ export const CourseDetails = ({
             </div>
 
             {isCompleted ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <button
                   onClick={() => generateAndDownloadCertificate(course)}
                   className="btn btn-success btn-lg"
@@ -209,6 +210,13 @@ export const CourseDetails = ({
                   <Award size={18} />
                   Download Verified Certificate
                 </button>
+
+                <DigiLockerButton
+                  certificate={issuedCert}
+                  disabled={!issuedCert}
+                  fullWidth={true}
+                  size="lg"
+                />
 
                 {issuedCert && (
                   <button

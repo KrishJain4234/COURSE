@@ -14,6 +14,7 @@ import {
 import { useLearning } from '../context/LearningContext';
 import { useAuth } from '../context/AuthContext';
 import { secureVaultApi } from '../services/secureVaultApi';
+import { DigiLockerButton } from '../components/common/DigiLockerButton';
 
 export const Certificates = ({
   onOpenCertificateModal,
@@ -206,35 +207,41 @@ export const Certificates = ({
                         </div>
                       </td>
 
-                      {/* Actions: Verify Button, Download Again Button */}
+                      {/* Actions: DigiLocker, Download, Verify, Preview */}
                       <td style={{ padding: '18px 20px', textAlign: 'right' }}>
-                        <div style={{ display: 'inline-flex', gap: '8px' }}>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                          {/* Add To DigiLocker */}
+                          <DigiLockerButton
+                            certificate={cert}
+                            size="sm"
+                          />
+
+                          {/* Download Again Button */}
+                          <button
+                            onClick={() => secureVaultApi.triggerPdfDownload(cert)}
+                            className="btn btn-secondary btn-sm"
+                            title="Download Certificate PDF Again"
+                          >
+                            <Download size={14} />
+                            Download
+                          </button>
+
                           {/* Verify Button */}
                           <a
                             href={verifyUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="btn btn-secondary btn-sm"
+                            className="btn btn-light-primary btn-sm"
                             title="Verify on SecureVault"
                           >
                             <ShieldCheck size={14} />
                             Verify
                           </a>
 
-                          {/* Download Again Button */}
-                          <button
-                            onClick={() => secureVaultApi.triggerPdfDownload(cert)}
-                            className="btn btn-primary btn-sm"
-                            title="Download Certificate PDF Again"
-                          >
-                            <Download size={14} />
-                            Download Again
-                          </button>
-
                           {/* Preview Button */}
                           <button
                             onClick={() => onOpenCertificatePreview(cert)}
-                            className="btn btn-light-primary btn-sm"
+                            className="btn btn-secondary btn-sm"
                             title="View Preview"
                           >
                             <ExternalLink size={14} />

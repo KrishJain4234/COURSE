@@ -1,5 +1,6 @@
 import React from 'react';
 import { ShieldCheck, Download, Printer, X, CheckCircle2, Award, QrCode, ExternalLink, Hash } from 'lucide-react';
+import { DigiLockerButton } from '../common/DigiLockerButton';
 
 export const CertificatePreview = ({ certificate, onClose, onVerify }) => {
   if (!certificate) return null;
@@ -55,6 +56,11 @@ export const CertificatePreview = ({ certificate, onClose, onVerify }) => {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <DigiLockerButton
+              certificate={certificate}
+              size="sm"
+            />
+
             <button
               onClick={handlePrint}
               className="btn btn-sm"

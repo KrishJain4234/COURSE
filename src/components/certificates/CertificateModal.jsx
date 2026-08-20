@@ -14,6 +14,7 @@ import {
   Lock
 } from 'lucide-react';
 import { secureVaultApi } from '../../services/secureVaultApi';
+import { DigiLockerButton } from '../common/DigiLockerButton';
 
 export const CertificateModal = ({
   certificate,
@@ -344,20 +345,28 @@ export const CertificateModal = ({
 
           {/* Action Buttons */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {/* Verify Button */}
-            <a
-              href={verifyUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-primary btn-lg"
-              style={{ width: '100%', textDecoration: 'none' }}
-            >
-              <ShieldCheck size={18} />
-              Verify Certificate
-              <ExternalLink size={15} style={{ marginLeft: '4px' }} />
-            </a>
+            {/* Add To DigiLocker Button (Prominent) */}
+            <DigiLockerButton
+              certificate={certificate}
+              fullWidth={true}
+              size="lg"
+            />
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              {/* Verify Button */}
+              <a
+                href={verifyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary"
+                style={{ width: '100%', textDecoration: 'none' }}
+              >
+                <ShieldCheck size={16} />
+                Verify Ledger
+                <ExternalLink size={13} style={{ marginLeft: '2px' }} />
+              </a>
+
+              {/* Download Again Button */}
               <button
                 onClick={() => {
                   secureVaultApi.triggerPdfDownload(certificate);
@@ -366,21 +375,21 @@ export const CertificateModal = ({
                 style={{ width: '100%' }}
               >
                 <Download size={16} />
-                Download Again
-              </button>
-
-              <button
-                onClick={() => {
-                  onClose();
-                  if (onOpenFullPreview) onOpenFullPreview(certificate);
-                }}
-                className="btn btn-light-primary"
-                style={{ width: '100%' }}
-              >
-                <FileText size={16} />
-                Certificate Preview
+                Download PDF
               </button>
             </div>
+
+            <button
+              onClick={() => {
+                onClose();
+                if (onOpenFullPreview) onOpenFullPreview(certificate);
+              }}
+              className="btn btn-light-primary"
+              style={{ width: '100%' }}
+            >
+              <FileText size={16} />
+              Open Full Certificate Preview
+            </button>
           </div>
         </div>
       </div>
