@@ -27,6 +27,7 @@ function MainPortal() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [selectedCourseId, setSelectedCourseId] = useState('ai-fundamentals');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [globalSearch, setGlobalSearch] = useState('');
   const [verifyDialogId, setVerifyDialogId] = useState(null);
 
@@ -37,11 +38,13 @@ function MainPortal() {
   const handleSelectCourse = (courseId) => {
     setSelectedCourseId(courseId);
     setActiveTab('course-details');
+    setMobileSidebarOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleNavigate = (tab) => {
     setActiveTab(tab);
+    setMobileSidebarOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -51,12 +54,20 @@ function MainPortal() {
 
   return (
     <div className="app-container">
-      {/* Collapsible Sidebar */}
+      {/* Mobile Backdrop Overlay */}
+      <div
+        className={`mobile-backdrop ${mobileSidebarOpen ? 'open' : ''}`}
+        onClick={() => setMobileSidebarOpen(false)}
+      />
+
+      {/* Collapsible Sidebar / Mobile Drawer */}
       <Sidebar
         activeTab={activeTab}
         onNavigate={handleNavigate}
         isCollapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+        mobileOpen={mobileSidebarOpen}
+        onCloseMobile={() => setMobileSidebarOpen(false)}
       />
 
       {/* Main Content Layout */}
@@ -70,7 +81,13 @@ function MainPortal() {
             }
           }}
           onNavigate={handleNavigate}
-          toggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
+          toggleSidebar={() => {
+            if (window.innerWidth <= 1024) {
+              setMobileSidebarOpen(!mobileSidebarOpen);
+            } else {
+              setSidebarCollapsed(!sidebarCollapsed);
+            }
+          }}
           sidebarCollapsed={sidebarCollapsed}
         />
 

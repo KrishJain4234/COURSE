@@ -35,10 +35,9 @@ export const CourseCatalog = ({ onSelectCourse, onNavigate }) => {
     <div className="page-container">
       {/* Header Banner */}
       <div
+        className="responsive-banner"
         style={{
-          padding: '32px 36px',
           backgroundColor: '#ffffff',
-          borderRadius: '16px',
           border: '1px solid var(--slate-200)',
           marginBottom: '32px',
           display: 'flex',
@@ -67,7 +66,7 @@ export const CourseCatalog = ({ onSelectCourse, onNavigate }) => {
             <Sparkles size={13} />
             Academic Curriculum 2026
           </div>
-          <h1 style={{ fontSize: '1.875rem', fontWeight: 800, color: 'var(--slate-900)', letterSpacing: '-0.02em', marginBottom: '8px' }}>
+          <h1 className="responsive-title" style={{ fontWeight: 800, color: 'var(--slate-900)', letterSpacing: '-0.02em', marginBottom: '8px' }}>
             Enterprise Course Catalog
           </h1>
           <p style={{ fontSize: '0.9375rem', color: 'var(--slate-600)', lineHeight: 1.5 }}>
@@ -76,6 +75,7 @@ export const CourseCatalog = ({ onSelectCourse, onNavigate }) => {
         </div>
 
         <div
+          className="hide-on-mobile"
           style={{
             padding: '16px 20px',
             backgroundColor: 'var(--slate-50)',
@@ -105,26 +105,26 @@ export const CourseCatalog = ({ onSelectCourse, onNavigate }) => {
         }}
       >
         {/* Category Pills */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+        <div className="category-pills-container">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
               className={`btn btn-sm ${selectedCategory === cat ? 'btn-primary' : 'btn-secondary'}`}
-              style={{ fontSize: '0.8125rem' }}
+              style={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}
             >
               {cat}
             </button>
           ))}
         </div>
 
-        {/* Search & Difficulty */}
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+        {/* Difficulty Filter & Search */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', width: '100%', maxWidth: '400px' }}>
           <select
             value={selectedDifficulty}
             onChange={(e) => setSelectedDifficulty(e.target.value)}
             className="form-input"
-            style={{ width: '140px', padding: '8px 10px', fontSize: '0.8125rem' }}
+            style={{ width: 'auto', padding: '8px 12px', fontSize: '0.8125rem', cursor: 'pointer' }}
           >
             <option value="All">All Levels</option>
             <option value="Beginner">Beginner</option>
@@ -132,7 +132,7 @@ export const CourseCatalog = ({ onSelectCourse, onNavigate }) => {
             <option value="Advanced">Advanced</option>
           </select>
 
-          <div style={{ position: 'relative', width: '220px' }}>
+          <div style={{ position: 'relative', flex: 1, minWidth: '150px' }}>
             <Search
               size={15}
               style={{
@@ -146,7 +146,7 @@ export const CourseCatalog = ({ onSelectCourse, onNavigate }) => {
             <input
               type="text"
               className="form-input"
-              style={{ padding: '8px 12px 8px 32px', fontSize: '0.8125rem' }}
+              style={{ padding: '8px 12px 8px 32px', fontSize: '0.8125rem', width: '100%' }}
               placeholder="Search catalog..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -159,8 +159,8 @@ export const CourseCatalog = ({ onSelectCourse, onNavigate }) => {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-          gap: '24px'
+          gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))',
+          gap: '20px'
         }}
       >
         {filteredCourses.map((course) => (

@@ -43,28 +43,9 @@ export const Login = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        backgroundColor: '#f8fafc'
-      }}
-    >
+    <div className="login-container">
       {/* Left Column: Brand, Institutional Benefits, & Learning Illustration */}
-      <div
-        style={{
-          flex: '1 1 50%',
-          backgroundColor: '#1e3a8a',
-          backgroundImage: 'linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%)',
-          color: '#ffffff',
-          padding: '60px 64px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          position: 'relative',
-          overflow: 'hidden'
-        }}
-      >
+      <div className="login-left-pane">
         {/* Subtle geometric lines */}
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, opacity: 0.05, backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
 
@@ -116,16 +97,16 @@ export const Login = ({ onLoginSuccess }) => {
         </div>
 
         {/* Center: Welcome Banner & Value Highlights */}
-        <div style={{ position: 'relative', zIndex: 2, margin: '40px 0' }}>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, lineHeight: 1.2, marginBottom: '16px', letterSpacing: '-0.03em' }}>
+        <div style={{ position: 'relative', zIndex: 2, margin: '30px 0' }}>
+          <h1 className="responsive-title" style={{ fontWeight: 800, lineHeight: 1.2, marginBottom: '16px', letterSpacing: '-0.03em' }}>
             Enterprise Skill Infrastructure for Future Leaders.
           </h1>
-          <p style={{ fontSize: '1.05rem', color: '#cbd5e1', lineHeight: 1.6, maxWidth: '520px', marginBottom: '32px' }}>
+          <p style={{ fontSize: '1rem', color: '#cbd5e1', lineHeight: 1.6, maxWidth: '520px', marginBottom: '24px' }}>
             Access accredited university courses, hands-on enterprise capstone evaluations, and cryptographically verifiable digital credentials.
           </p>
 
           {/* Benefits Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', maxWidth: '520px' }}>
+          <div className="responsive-subgrid" style={{ maxWidth: '520px' }}>
             <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.06)', border: '1px solid rgba(255, 255, 255, 0.1)', padding: '16px', borderRadius: '10px' }}>
               <Award size={20} color="#60a5fa" style={{ marginBottom: '8px' }} />
               <div style={{ fontSize: '0.875rem', fontWeight: 700, marginBottom: '2px' }}>Verifiable Credentials</div>
@@ -164,16 +145,7 @@ export const Login = ({ onLoginSuccess }) => {
       </div>
 
       {/* Right Column: Clean Corporate Login Card */}
-      <div
-        style={{
-          flex: '1 1 50%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: '40px 32px'
-        }}
-      >
+      <div className="login-right-pane">
         <div style={{ width: '100%', maxWidth: '440px' }}>
           {/* Header */}
           <div style={{ marginBottom: '32px' }}>

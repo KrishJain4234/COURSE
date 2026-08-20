@@ -40,7 +40,7 @@ export const MyLearning = ({ onSelectCourse, onNavigate }) => {
     <div className="page-container">
       {/* Header */}
       <div style={{ marginBottom: '28px' }}>
-        <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--slate-900)', letterSpacing: '-0.02em' }}>
+        <h1 className="responsive-title" style={{ fontWeight: 800, color: 'var(--slate-900)', letterSpacing: '-0.02em' }}>
           My Learning Program
         </h1>
         <p style={{ fontSize: '0.875rem', color: 'var(--slate-600)', marginTop: '4px' }}>
@@ -62,7 +62,7 @@ export const MyLearning = ({ onSelectCourse, onNavigate }) => {
         }}
       >
         {/* Tabs */}
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
           <button
             onClick={() => setFilterTab('all')}
             className={`btn btn-sm ${filterTab === 'all' ? 'btn-primary' : 'btn-secondary'}`}
@@ -84,7 +84,7 @@ export const MyLearning = ({ onSelectCourse, onNavigate }) => {
         </div>
 
         {/* Search */}
-        <div style={{ width: '280px' }}>
+        <div style={{ width: '100%', maxWidth: '300px' }}>
           <input
             type="text"
             className="form-input"
@@ -101,8 +101,8 @@ export const MyLearning = ({ onSelectCourse, onNavigate }) => {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-            gap: '24px'
+            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))',
+            gap: '20px'
           }}
         >
           {filteredCourses.map((course) => (

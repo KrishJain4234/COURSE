@@ -61,38 +61,38 @@ export const Profile = ({ onOpenCertificatePreview, onNavigate }) => {
     <div className="page-container">
       {/* Header Profile Card */}
       <div
-        className="card"
+        className="card responsive-banner"
         style={{
-          padding: '32px 36px',
           marginBottom: '32px',
           backgroundColor: '#ffffff'
         }}
       >
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '20px' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '20px' }}>
             {/* Avatar Pill */}
             <div
               style={{
-                width: '84px',
-                height: '84px',
+                width: '76px',
+                height: '76px',
                 borderRadius: '16px',
                 backgroundColor: 'var(--primary-700)',
                 color: '#ffffff',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '2rem',
+                fontSize: '1.85rem',
                 fontWeight: 800,
                 border: '3px solid var(--primary-100)',
-                boxShadow: '0 4px 12px rgba(30, 58, 138, 0.15)'
+                boxShadow: '0 4px 12px rgba(30, 58, 138, 0.15)',
+                flexShrink: 0
               }}
             >
               KJ
             </div>
 
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
-                <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--slate-900)' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+                <h1 className="responsive-title" style={{ fontWeight: 800, color: 'var(--slate-900)' }}>
                   {user?.name || 'Krish Jain'}
                 </h1>
                 <span
@@ -113,7 +113,7 @@ export const Profile = ({ onOpenCertificatePreview, onNavigate }) => {
                 </span>
               </div>
 
-              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '16px', fontSize: '0.8125rem', color: 'var(--slate-600)' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '14px', fontSize: '0.8125rem', color: 'var(--slate-600)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <Building2 size={15} color="var(--slate-400)" />
                   <span>{user?.institution || 'BMS Institute of Technology'}</span>
@@ -143,14 +143,14 @@ export const Profile = ({ onOpenCertificatePreview, onNavigate }) => {
       </div>
 
       {/* Grid: Learning Statistics & Academic Information */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr)', gap: '28px', marginBottom: '32px' }}>
+      <div className="responsive-profile-grid" style={{ marginBottom: '32px' }}>
         {/* Academic Details & Department */}
-        <div className="card" style={{ padding: '28px' }}>
+        <div className="card" style={{ padding: '24px' }}>
           <h2 style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--slate-900)', marginBottom: '18px' }}>
             Institutional Registration
           </h2>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', fontSize: '0.8125rem' }}>
+          <div className="responsive-subgrid" style={{ fontSize: '0.8125rem' }}>
             <div style={{ padding: '12px', backgroundColor: 'var(--slate-50)', borderRadius: '8px' }}>
               <span style={{ color: 'var(--slate-500)', fontSize: '0.7rem', textTransform: 'uppercase', fontWeight: 600, display: 'block' }}>
                 Academic Institution
@@ -184,12 +184,12 @@ export const Profile = ({ onOpenCertificatePreview, onNavigate }) => {
         </div>
 
         {/* Learning Statistics Summary */}
-        <div className="card" style={{ padding: '28px' }}>
+        <div className="card" style={{ padding: '24px' }}>
           <h2 style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--slate-900)', marginBottom: '18px' }}>
             Academic Statistics
           </h2>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+          <div className="responsive-subgrid">
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', backgroundColor: 'var(--slate-50)', borderRadius: '8px' }}>
               <BookOpen size={20} color="var(--primary-700)" />
               <div>

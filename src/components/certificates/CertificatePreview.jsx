@@ -24,18 +24,20 @@ export const CertificatePreview = ({ certificate, onClose, onVerify }) => {
         {/* Top Action Toolbar (hidden during print) */}
         <div
           style={{
-            padding: '16px 24px',
+            padding: '14px 20px',
             backgroundColor: 'var(--slate-900)',
             color: '#ffffff',
             display: 'flex',
+            flexWrap: 'wrap',
             alignItems: 'center',
-            justifyContent: 'space-between'
+            justifyContent: 'space-between',
+            gap: '12px'
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '8px' }}>
             <Award size={20} color="#60a5fa" />
             <span style={{ fontSize: '0.9375rem', fontWeight: 700 }}>
-              Official Verifiable Credential Viewer
+              Verifiable Credential
             </span>
             <span
               style={{
@@ -48,11 +50,11 @@ export const CertificatePreview = ({ certificate, onClose, onVerify }) => {
                 fontWeight: 600
               }}
             >
-              SecureVault Ledger Block #{certificate.blockNumber || '14285942'}
+              Block #{certificate.blockNumber || '14285942'}
             </span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
             <button
               onClick={handlePrint}
               className="btn btn-sm"

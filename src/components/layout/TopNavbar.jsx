@@ -17,23 +17,24 @@ export const TopNavbar = ({
   return (
     <header className="top-navbar">
       {/* Left: Mobile hamburger & Search bar */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: 0 }}>
         <button
           onClick={toggleSidebar}
           style={{
             background: 'none',
             border: 'none',
-            color: 'var(--slate-600)',
+            color: 'var(--slate-700)',
             cursor: 'pointer',
-            padding: '6px',
-            borderRadius: '6px',
+            padding: '8px',
+            borderRadius: '8px',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            flexShrink: 0
           }}
-          title={sidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+          title={sidebarCollapsed ? 'Open Menu' : 'Toggle Menu'}
         >
-          <Menu size={20} />
+          <Menu size={22} />
         </button>
 
         <div className="search-input-wrapper">
@@ -50,7 +51,7 @@ export const TopNavbar = ({
           <input
             type="text"
             className="search-input"
-            placeholder="Search courses, modules, skills..."
+            placeholder="Search courses..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -58,11 +59,11 @@ export const TopNavbar = ({
       </div>
 
       {/* Right: Institutional Badge, Notifications, User Pill */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '18px', position: 'relative' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', position: 'relative', flexShrink: 0 }}>
         {/* Institutional Verification Status */}
         <div
+          className="hide-on-mobile"
           style={{
-            display: 'flex',
             alignItems: 'center',
             gap: '6px',
             padding: '5px 12px',
@@ -158,7 +159,7 @@ export const TopNavbar = ({
             >
               KJ
             </div>
-            <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column' }}>
+            <div className="hide-on-small" style={{ textAlign: 'left', display: 'flex', flexDirection: 'column' }}>
               <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--slate-900)', lineHeight: 1.1 }}>
                 {user?.name || 'Krish Jain'}
               </span>

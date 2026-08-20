@@ -9,12 +9,20 @@ import {
   GraduationCap,
   ShieldCheck,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  X
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useLearning } from '../../context/LearningContext';
 
-export const Sidebar = ({ activeTab, onNavigate, isCollapsed, onToggleCollapse }) => {
+export const Sidebar = ({
+  activeTab,
+  onNavigate,
+  isCollapsed,
+  onToggleCollapse,
+  mobileOpen,
+  onCloseMobile
+}) => {
   const { logout } = useAuth();
   const { learningSummary } = useLearning();
 
@@ -36,36 +44,68 @@ export const Sidebar = ({ activeTab, onNavigate, isCollapsed, onToggleCollapse }
     { id: 'profile', label: 'Profile', icon: User }
   ];
 
+  const handleItemClick = (tabId) => {
+    onNavigate(tabId);
+    if (onCloseMobile) {
+      onCloseMobile();
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
+    if (onCloseMobile) {
+      onCloseMobile();
+    }
+  };
+
   return (
-    <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
+    <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''} ${mobileOpen ? 'mobile-open' : ''}`}>
       {/* Brand Header */}
       <div className="sidebar-brand">
-        <div
-          style={{
-            width: '36px',
-            height: '36px',
-            borderRadius: '8px',
-            backgroundColor: 'var(--primary-700)',
-            color: '#ffffff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0
-          }}
-        >
-          <GraduationCap size={22} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div
+            style={{
+              width: '36px',
+              height: '36px',
+              borderRadius: '8px',
+              backgroundColor: 'var(--primary-700)',
+              color: '#ffffff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0
+            }}
+          >
+            <GraduationCap size={22} />
+          </div>
+
+          {(!isCollapsed || mobileOpen) && (
+            <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+              <span style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--slate-900)', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+                EduVerse
+              </span>
+              <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: 'var(--primary-700)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Enterprise Portal
+              </span>
+            </div>
+          )}
         </div>
 
-        {!isCollapsed && (
-          <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-            <span style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--slate-900)', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
-              EduVerse
-            </span>
-            <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: 'var(--primary-700)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              Enterprise Portal
-            </span>
-          </div>
-        )}
+        {/* Mobile Close X button */}
+        <button
+          onClick={onCloseMobile}
+          className="show-only-mobile"
+          style={{
+            background: 'none',
+            border: 'none',
+            color: 'var(--slate-500)',
+            cursor: 'pointer',
+            padding: '4px'
+          }}
+          title="Close Navigation"
+        >
+          <X size={22} />
+        </button>
       </div>
 
       {/* Navigation List */}
@@ -77,7 +117,7 @@ export const Sidebar = ({ activeTab, onNavigate, isCollapsed, onToggleCollapse }
           return (
             <button
               key={item.id}
-              onClick={() => onNavigate(item.id)}
+              onClick={() => handleItemClick(item.id)}
               className={`nav-item ${isActive ? 'active' : ''}`}
               style={{
                 width: '100%',
@@ -85,11 +125,11 @@ export const Sidebar = ({ activeTab, onNavigate, isCollapsed, onToggleCollapse }
                 border: 'none',
                 textAlign: 'left'
               }}
-              title={isCollapsed ? item.label : undefined}
+              title={isCollapsed && !mobileOpen ? item.label : undefined}
             >
               <Icon size={19} color={isActive ? 'var(--primary-700)' : 'var(--slate-500)'} />
               
-              {!isCollapsed && (
+              {(!isCollapsed || mobileOpen) && (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
                   <span>{item.label}</span>
                   {item.badge && (
@@ -140,7 +180,7 @@ export const Sidebar = ({ activeTab, onNavigate, isCollapsed, onToggleCollapse }
         )}
 
         <button
-          onClick={logout}
+          onClick={handleLogout}
           className="nav-item"
           style={{
             width: '100%',
@@ -149,14 +189,15 @@ export const Sidebar = ({ activeTab, onNavigate, isCollapsed, onToggleCollapse }
             color: '#dc2626',
             marginBottom: '8px'
           }}
-          title={isCollapsed ? 'Log Out' : undefined}
+          title={isCollapsed && !mobileOpen ? 'Log Out' : undefined}
         >
           <LogOut size={19} color="#dc2626" />
-          {!isCollapsed && <span>Log Out</span>}
+          {(!isCollapsed || mobileOpen) && <span>Log Out</span>}
         </button>
 
         <button
           onClick={onToggleCollapse}
+          className="hide-on-mobile"
           style={{
             width: '100%',
             padding: '8px',

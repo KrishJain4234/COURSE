@@ -55,7 +55,7 @@ export const Dashboard = ({ onNavigate, onSelectCourse }) => {
               Academic Portal • {user?.institution || 'BMS Institute of Technology'}
             </span>
           </div>
-          <h1 style={{ fontSize: '1.875rem', fontWeight: 800, color: 'var(--slate-900)', letterSpacing: '-0.02em' }}>
+          <h1 className="responsive-title" style={{ fontWeight: 800, color: 'var(--slate-900)', letterSpacing: '-0.02em' }}>
             Welcome back, {user?.name || 'Krish Jain'}
           </h1>
           <p style={{ fontSize: '0.9375rem', color: 'var(--slate-600)', marginTop: '4px' }}>
@@ -63,7 +63,7 @@ export const Dashboard = ({ onNavigate, onSelectCourse }) => {
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '12px' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
           <button
             onClick={() => onNavigate('catalog')}
             className="btn btn-secondary"
@@ -84,8 +84,8 @@ export const Dashboard = ({ onNavigate, onSelectCourse }) => {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '18px',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))',
+          gap: '16px',
           marginBottom: '32px'
         }}
       >
@@ -224,8 +224,8 @@ export const Dashboard = ({ onNavigate, onSelectCourse }) => {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-            gap: '24px'
+            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))',
+            gap: '20px'
           }}
         >
           {courses.slice(0, 3).map((course) => (

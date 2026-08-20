@@ -96,12 +96,11 @@ export const CourseDetails = ({
 
       {/* Course Banner Header */}
       <div
+        className="responsive-banner"
         style={{
-          padding: '36px 40px',
           backgroundColor: '#1e3a8a',
           backgroundImage: 'linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%)',
           color: '#ffffff',
-          borderRadius: '16px',
           marginBottom: '32px',
           position: 'relative',
           overflow: 'hidden'
@@ -149,7 +148,7 @@ export const CourseDetails = ({
               </span>
             </div>
 
-            <h1 style={{ fontSize: '2.1rem', fontWeight: 800, lineHeight: 1.25, letterSpacing: '-0.02em', marginBottom: '12px' }}>
+            <h1 className="responsive-title" style={{ fontWeight: 800, lineHeight: 1.25, letterSpacing: '-0.02em', marginBottom: '12px' }}>
               {course.name}
             </h1>
 
@@ -273,7 +272,7 @@ export const CourseDetails = ({
       </div>
 
       {/* Main Content Layout: Left Modules vs Right Details */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)', gap: '32px' }}>
+      <div className="responsive-2col">
         {/* Left: Interactive Modules Curriculum */}
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>

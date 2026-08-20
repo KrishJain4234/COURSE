@@ -38,10 +38,9 @@ export const Certificates = ({
     <div className="page-container">
       {/* Header Banner */}
       <div
+        className="responsive-banner"
         style={{
-          padding: '32px 36px',
           backgroundColor: '#ffffff',
-          borderRadius: '16px',
           border: '1px solid var(--slate-200)',
           marginBottom: '32px',
           display: 'flex',
@@ -70,7 +69,7 @@ export const Certificates = ({
             <ShieldCheck size={14} />
             SecureVault Ledger Verified
           </div>
-          <h1 style={{ fontSize: '1.875rem', fontWeight: 800, color: 'var(--slate-900)', letterSpacing: '-0.02em', marginBottom: '8px' }}>
+          <h1 className="responsive-title" style={{ fontWeight: 800, color: 'var(--slate-900)', letterSpacing: '-0.02em', marginBottom: '8px' }}>
             My Certificates
           </h1>
           <p style={{ fontSize: '0.9375rem', color: 'var(--slate-600)', lineHeight: 1.5 }}>
@@ -106,7 +105,7 @@ export const Certificates = ({
           </span>
         </div>
 
-        <div style={{ position: 'relative', width: '280px' }}>
+        <div style={{ position: 'relative', width: '100%', maxWidth: '320px' }}>
           <Search
             size={15}
             style={{
