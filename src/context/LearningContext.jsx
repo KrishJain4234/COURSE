@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { COURSES_DATA } from '../data/coursesData';
 import { secureVaultApi } from '../services/secureVaultApi';
+import { useAuth } from './AuthContext';
 import confetti from 'canvas-confetti';
 
 const LearningContext = createContext(null);
@@ -10,7 +11,6 @@ const STORAGE_KEY_PROGRESS = 'eduverse_courses_progress';
 // Helper to build initial course state
 const buildInitialCoursesState = () => {
   return COURSES_DATA.map((course) => {
-    // Determine default completed lessons based on defaultProgress
     const completedLessonIds = [];
     const totalLessons = course.modules.reduce((acc, m) => acc + m.lessons.length, 0);
     const targetCompletedCount = Math.round((course.defaultProgress / 100) * totalLessons);
@@ -39,6 +39,8 @@ const buildInitialCoursesState = () => {
 };
 
 export const LearningProvider = ({ children }) => {
+  const { user } = useAuth();
+
   const [courses, setCourses] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_PROGRESS);
@@ -52,29 +54,33 @@ export const LearningProvider = ({ children }) => {
   });
 
   const [certificates, setCertificates] = useState([]);
-  const [activeCertificateModal, setActiveCertificateModal] = useState(null); // cert for "Certificate Ready" modal
-  const [activeCertificatePreview, setActiveCertificatePreview] = useState(null); // cert for full high-res preview
+  const [activeCertificateModal, setActiveCertificateModal] = useState(null);
+  const [activeCertificatePreview, setActiveCertificatePreview] = useState(null);
+  const [loadingStep, setLoadingStep] = useState(null); // 'Generating Certificate...' | 'Registering in SecureVault...' etc.
 
-  // Seed default certificate for Blockchain Essentials on mount
+  // Seed default certificate for Blockchain Essentials on mount if needed
   useEffect(() => {
     const seedBlockchainCert = async () => {
-      // Ensure default certificate is registered in SecureVault
-      const blockchainCourse = COURSES_DATA.find((c) => c.id === 'blockchain-essentials');
-      if (blockchainCourse) {
-        await secureVaultApi.generateCertificate({
-          courseId: blockchainCourse.id,
-          courseTitle: blockchainCourse.name,
-          learnerId: 'STU-2026-001',
-          learnerName: 'Krish Jain',
-          institution: 'BMS Institute of Technology',
-          grade: 'Distinction (98.2%)',
-          creditHours: '20 CPE Credits'
-        });
-      }
-
-      // Load all certificates from SecureVault
       const allCerts = secureVaultApi.getAllCertificates();
-      setCertificates(allCerts);
+      if (allCerts.length === 0) {
+        const blockchainCourse = COURSES_DATA.find((c) => c.id === 'blockchain-essentials');
+        if (blockchainCourse) {
+          const res = await secureVaultApi.generateCertificate({
+            courseId: blockchainCourse.id,
+            courseTitle: blockchainCourse.name,
+            learnerName: 'Krish Jain',
+            learnerId: 'STU-2026-001',
+            organization: 'SkillForge Academy',
+            issueDate: new Date().toISOString().split('T')[0],
+            description: 'Successfully completed the course.'
+          });
+          if (res.success) {
+            setCertificates(secureVaultApi.getAllCertificates());
+          }
+        }
+      } else {
+        setCertificates(allCerts);
+      }
     };
 
     seedBlockchainCert();
@@ -88,6 +94,52 @@ export const LearningProvider = ({ children }) => {
       console.error('Failed to save courses progress:', e);
     }
   }, [courses]);
+
+  // Handle certificate generation workflow with live loading stages
+  const generateAndDownloadCertificate = async (course) => {
+    try {
+      // Show loading step in modal
+      setLoadingStep('Generating Certificate...');
+      setActiveCertificateModal({ courseTitle: course.name, studentName: user?.name || 'Krish Jain' });
+
+      const res = await secureVaultApi.generateCertificate({
+        courseId: course.id,
+        courseTitle: course.name,
+        learnerName: user?.name || 'Krish Jain',
+        learnerId: user?.learnerId || 'STU-2026-001',
+        organization: 'SkillForge Academy',
+        issueDate: new Date().toISOString().split('T')[0],
+        description: 'Successfully completed the course.',
+        onStepChange: (step) => setLoadingStep(step)
+      });
+
+      // Done loading
+      setLoadingStep(null);
+
+      if (res.success && res.certificate) {
+        // Trigger celebratory confetti
+        try {
+          confetti({
+            particleCount: 90,
+            spread: 70,
+            origin: { y: 0.6 }
+          });
+        } catch (err) {
+          // ignore if not supported
+        }
+
+        // Refresh certificates list
+        const allCerts = secureVaultApi.getAllCertificates();
+        setCertificates(allCerts);
+
+        // Open the "Certificate Successfully Issued" modal
+        setActiveCertificateModal(res.certificate);
+      }
+    } catch (e) {
+      console.error('Failed to generate certificate:', e);
+      setLoadingStep(null);
+    }
+  };
 
   // Toggle lesson completed status
   const toggleLesson = async (courseId, moduleId, lessonId) => {
@@ -123,9 +175,9 @@ export const LearningProvider = ({ children }) => {
       })
     );
 
-    // If completed 100%, generate certificate
+    // If completed 100%, trigger certificate generation
     if (newlyCompleted && targetCourse) {
-      await handleCourseCompletion(targetCourse);
+      await generateAndDownloadCertificate(targetCourse);
     }
   };
 
@@ -152,11 +204,11 @@ export const LearningProvider = ({ children }) => {
     );
 
     if (targetCourse) {
-      await handleCourseCompletion(targetCourse);
+      await generateAndDownloadCertificate(targetCourse);
     }
   };
 
-  // Reset course progress (helpful for live evaluation/demos)
+  // Reset course progress
   const resetCourseProgress = (courseId) => {
     setCourses((prevCourses) =>
       prevCourses.map((course) => {
@@ -173,49 +225,12 @@ export const LearningProvider = ({ children }) => {
     );
   };
 
-  // Helper when course hits 100%
-  const handleCourseCompletion = async (course) => {
-    try {
-      // Trigger festive enterprise confetti
-      try {
-        confetti({
-          particleCount: 80,
-          spread: 60,
-          origin: { y: 0.6 }
-        });
-      } catch (err) {
-        // ignore if not supported
-      }
-
-      const res = await secureVaultApi.generateCertificate({
-        courseId: course.id,
-        courseTitle: course.name,
-        learnerId: 'STU-2026-001',
-        learnerName: 'Krish Jain',
-        institution: 'BMS Institute of Technology',
-        grade: 'Excellence (95.0%)',
-        creditHours: course.duration
-      });
-
-      if (res.success && res.certificate) {
-        // Refresh certificates
-        const allCerts = secureVaultApi.getAllCertificates();
-        setCertificates(allCerts);
-        // Prompt the Certificate Ready modal
-        setActiveCertificateModal(res.certificate);
-      }
-    } catch (e) {
-      console.error('Failed to issue certificate:', e);
-    }
-  };
-
   // Computed summary metrics
   const learningSummary = useMemo(() => {
     const enrolled = courses.length;
     const completed = courses.filter((c) => c.isCompleted).length;
     const certsCount = certificates.length;
 
-    // Calculate approximate learning hours completed
     let totalCompletedHours = 0;
     courses.forEach((c) => {
       totalCompletedHours += Math.round((c.progress / 100) * c.durationHours);
@@ -226,7 +241,7 @@ export const LearningProvider = ({ children }) => {
       completedCourses: completed,
       certificatesEarned: certsCount,
       learningHours: totalCompletedHours || 42,
-      currentStreak: 7 // 7-day streak
+      currentStreak: 7
     };
   }, [courses, certificates]);
 
@@ -238,11 +253,13 @@ export const LearningProvider = ({ children }) => {
         learningSummary,
         toggleLesson,
         markCourseCompleted,
+        generateAndDownloadCertificate,
         resetCourseProgress,
         activeCertificateModal,
         setActiveCertificateModal,
         activeCertificatePreview,
         setActiveCertificatePreview,
+        loadingStep,
         refreshCertificates: () => setCertificates(secureVaultApi.getAllCertificates())
       }}
     >

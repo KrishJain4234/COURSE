@@ -20,16 +20,16 @@ function MainPortal() {
     activeCertificateModal,
     setActiveCertificateModal,
     activeCertificatePreview,
-    setActiveCertificatePreview
+    setActiveCertificatePreview,
+    loadingStep
   } = useLearning();
 
   const [activeTab, setActiveTab] = useState('dashboard');
   const [selectedCourseId, setSelectedCourseId] = useState('ai-fundamentals');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [globalSearch, setGlobalSearch] = useState('');
-  const [verifyDialogId, setVerifyDialogId] = useState(null); // string or null
+  const [verifyDialogId, setVerifyDialogId] = useState(null);
 
-  // If not authenticated, show corporate login page
   if (!isAuthenticated) {
     return <Login onLoginSuccess={() => setActiveTab('dashboard')} />;
   }
@@ -46,7 +46,7 @@ function MainPortal() {
   };
 
   const handleOpenVerifyDialog = (certId = '') => {
-    setVerifyDialogId(certId || 'EDU-2026-8492');
+    setVerifyDialogId(certId || 'SV-2026-0001');
   };
 
   return (
@@ -122,13 +122,13 @@ function MainPortal() {
         </main>
       </div>
 
-      {/* "Certificate Ready" Modal (Triggered on 100% completion or Download button) */}
-      {activeCertificateModal && (
+      {/* "Certificate Ready / Loading" Modal */}
+      {(activeCertificateModal || loadingStep) && (
         <CertificateModal
           certificate={activeCertificateModal}
+          loadingStep={loadingStep}
           onClose={() => setActiveCertificateModal(null)}
           onOpenFullPreview={(cert) => setActiveCertificatePreview(cert)}
-          onOpenVerifyDialog={(id) => handleOpenVerifyDialog(id)}
         />
       )}
 

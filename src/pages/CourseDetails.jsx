@@ -36,6 +36,7 @@ export const CourseDetails = ({
     courses,
     toggleLesson,
     markCourseCompleted,
+    generateAndDownloadCertificate,
     resetCourseProgress,
     certificates
   } = useLearning();
@@ -201,33 +202,23 @@ export const CourseDetails = ({
             {isCompleted ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <button
-                  onClick={() => {
-                    const cert = issuedCert || {
-                      certificateId: 'EDU-2026-8492',
-                      courseTitle: course.name,
-                      learnerName: user?.name || 'Krish Jain',
-                      learnerId: user?.learnerId || 'STU-2026-001',
-                      institution: user?.institution || 'BMS Institute of Technology',
-                      issueDate: 'August 20, 2026',
-                      status: 'Verified',
-                      verificationStatus: 'SecureVault Enabled'
-                    };
-                    onOpenCertificateModal(cert);
-                  }}
+                  onClick={() => generateAndDownloadCertificate(course)}
                   className="btn btn-success"
-                  style={{ width: '100%' }}
+                  style={{ width: '100%', fontWeight: 700 }}
                 >
                   <Award size={18} />
-                  Download Certificate
+                  Download Verified Certificate
                 </button>
 
                 <button
                   onClick={() => {
                     const cert = issuedCert || {
-                      certificateId: 'EDU-2026-8492',
+                      certificateId: 'SV-2026-0001',
                       courseTitle: course.name,
                       learnerName: user?.name || 'Krish Jain',
+                      studentName: user?.name || 'Krish Jain',
                       learnerId: user?.learnerId || 'STU-2026-001',
+                      organization: 'SkillForge Academy',
                       institution: user?.institution || 'BMS Institute of Technology',
                       issueDate: 'August 20, 2026',
                       status: 'Verified',
