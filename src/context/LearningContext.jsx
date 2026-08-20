@@ -53,37 +53,18 @@ export const LearningProvider = ({ children }) => {
     return buildInitialCoursesState();
   });
 
-  const [certificates, setCertificates] = useState([]);
+  const [certificates, setCertificates] = useState(() => {
+    return secureVaultApi.getAllCertificates();
+  });
+
   const [activeCertificateModal, setActiveCertificateModal] = useState(null);
   const [activeCertificatePreview, setActiveCertificatePreview] = useState(null);
-  const [loadingStep, setLoadingStep] = useState(null); // 'Generating Certificate...' | 'Registering in SecureVault...' etc.
+  const [loadingStep, setLoadingStep] = useState(null);
 
-  // Seed default certificate for Blockchain Essentials on mount if needed
+  // Sync certificates from storage on mount
   useEffect(() => {
-    const seedBlockchainCert = async () => {
-      const allCerts = secureVaultApi.getAllCertificates();
-      if (allCerts.length === 0) {
-        const blockchainCourse = COURSES_DATA.find((c) => c.id === 'blockchain-essentials');
-        if (blockchainCourse) {
-          const res = await secureVaultApi.generateCertificate({
-            courseId: blockchainCourse.id,
-            courseTitle: blockchainCourse.name,
-            learnerName: 'Krish Jain',
-            learnerId: 'STU-2026-001',
-            organization: 'SkillForge Academy',
-            issueDate: new Date().toISOString().split('T')[0],
-            description: 'Successfully completed the course.'
-          });
-          if (res.success) {
-            setCertificates(secureVaultApi.getAllCertificates());
-          }
-        }
-      } else {
-        setCertificates(allCerts);
-      }
-    };
-
-    seedBlockchainCert();
+    const allCerts = secureVaultApi.getAllCertificates();
+    setCertificates(allCerts);
   }, []);
 
   // Save courses progress whenever changed
@@ -95,20 +76,23 @@ export const LearningProvider = ({ children }) => {
     }
   }, [courses]);
 
-  // Handle certificate generation workflow with live loading stages
+  // Handle dynamic certificate generation workflow with live loading stages
   const generateAndDownloadCertificate = async (course) => {
+    const courseTitle = course.title || course.name;
+    const studentName = user?.name || 'Krish Jain';
+    const issueDate = new Date().toISOString().split('T')[0];
+
     try {
       // Show loading step in modal
       setLoadingStep('Generating Certificate...');
-      setActiveCertificateModal({ courseTitle: course.name, studentName: user?.name || 'Krish Jain' });
+      setActiveCertificateModal({ courseTitle, studentName });
 
       const res = await secureVaultApi.generateCertificate({
         courseId: course.id,
-        courseTitle: course.name,
-        learnerName: user?.name || 'Krish Jain',
-        learnerId: user?.learnerId || 'STU-2026-001',
+        courseTitle: courseTitle,
+        learnerName: studentName,
         organization: 'SkillForge Academy',
-        issueDate: new Date().toISOString().split('T')[0],
+        issueDate: issueDate,
         description: 'Successfully completed the course.',
         onStepChange: (step) => setLoadingStep(step)
       });
@@ -125,7 +109,7 @@ export const LearningProvider = ({ children }) => {
             origin: { y: 0.6 }
           });
         } catch (err) {
-          // ignore if not supported
+          // ignore
         }
 
         // Refresh certificates list
@@ -143,9 +127,6 @@ export const LearningProvider = ({ children }) => {
 
   // Toggle lesson completed status
   const toggleLesson = async (courseId, moduleId, lessonId) => {
-    let newlyCompleted = false;
-    let targetCourse = null;
-
     setCourses((prevCourses) =>
       prevCourses.map((course) => {
         if (course.id !== courseId) return course;
@@ -159,11 +140,6 @@ export const LearningProvider = ({ children }) => {
         const progressPercentage = Math.min(100, Math.round((updatedLessons.length / totalLessons) * 100));
         const isNowCompleted = progressPercentage === 100;
 
-        if (isNowCompleted && !course.isCompleted) {
-          newlyCompleted = true;
-          targetCourse = course;
-        }
-
         return {
           ...course,
           completedLessons: updatedLessons,
@@ -174,11 +150,6 @@ export const LearningProvider = ({ children }) => {
         };
       })
     );
-
-    // If completed 100%, trigger certificate generation
-    if (newlyCompleted && targetCourse) {
-      await generateAndDownloadCertificate(targetCourse);
-    }
   };
 
   // Explicit mark course completed flow
@@ -190,9 +161,7 @@ export const LearningProvider = ({ children }) => {
         if (course.id !== courseId) return course;
 
         const allLessonIds = course.modules.flatMap((m) => m.lessons.map((l) => l.id));
-        targetCourse = course;
-
-        return {
+        targetCourse = {
           ...course,
           completedLessons: allLessonIds,
           progress: 100,
@@ -200,12 +169,10 @@ export const LearningProvider = ({ children }) => {
           status: 'Completed',
           lastAccessed: 'Just now'
         };
+
+        return targetCourse;
       })
     );
-
-    if (targetCourse) {
-      await generateAndDownloadCertificate(targetCourse);
-    }
   };
 
   // Reset course progress

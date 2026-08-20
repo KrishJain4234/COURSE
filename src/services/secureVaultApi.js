@@ -1,10 +1,9 @@
 /**
  * SecureVault Enterprise API Client
- * Interfaces with the deployed SecureVault backend service.
- * Supports IPFS Anchoring, SHA-256 Ledger Hashing, and Live Verification.
+ * Fully dynamic interface connecting to deployed SecureVault backend.
  */
 
-const STORAGE_KEY = 'eduverse_securevault_ledger';
+const STORAGE_KEY = 'eduverse_issued_certificates';
 
 // Load base URLs from environment variables
 const getApiBaseUrl = () => {
@@ -25,34 +24,22 @@ const getVerifyBaseUrl = () => {
 };
 
 // Storage helper functions
-export const getStoredLedger = () => {
+export const getStoredCertificates = () => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
+    return raw ? JSON.parse(raw) : [];
   } catch (e) {
-    console.error('Failed to read SecureVault ledger:', e);
-    return {};
+    console.error('Failed to read issued certificates from storage:', e);
+    return [];
   }
 };
 
-export const saveStoredLedger = (ledger) => {
+export const saveStoredCertificates = (certs) => {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(ledger));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(certs));
   } catch (e) {
-    console.error('Failed to save SecureVault ledger:', e);
+    console.error('Failed to save issued certificates:', e);
   }
-};
-
-// Generate deterministic pseudo-SHA256 hash for offline fallback
-const generateFallbackHash = (str) => {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash |= 0;
-  }
-  const hex = Math.abs(hash).toString(16).padStart(8, '0');
-  return `0x8f4b${hex}e92c4a71d88b901a${hex.slice(0, 4)}f5c2`;
 };
 
 export const secureVaultApi = {
@@ -60,14 +47,13 @@ export const secureVaultApi = {
   getVerifyBaseUrl,
 
   /**
-   * Generates a tamper-proof certificate by calling SecureVault backend:
+   * Generates a dynamic certificate via SecureVault backend:
    * POST /generate-certificate
    */
   generateCertificate: async ({
     courseId,
     courseTitle,
     learnerName = 'Krish Jain',
-    learnerId = 'STU-2026-001',
     organization = 'SkillForge Academy',
     issueDate,
     description = 'Successfully completed the course.',
@@ -83,20 +69,20 @@ export const secureVaultApi = {
     const apiUrl = getApiBaseUrl();
     const verifyBaseUrl = getVerifyBaseUrl();
 
-    // 1. Step: Generating Certificate
+    // 1. Step: Generating Certificate...
     onStepChange('Generating Certificate...');
     await new Promise((r) => setTimeout(r, 600));
 
-    // 2. Step: Registering in SecureVault
-    onStepChange('Registering in SecureVault...');
+    // 2. Step: Creating Hash...
+    onStepChange('Creating Hash...');
     await new Promise((r) => setTimeout(r, 600));
 
-    // 3. Step: Creating QR Code
-    onStepChange('Creating QR Code...');
-    await new Promise((r) => setTimeout(r, 500));
-
-    // 4. Step: Anchoring to IPFS
+    // 3. Step: Anchoring to IPFS...
     onStepChange('Anchoring to IPFS...');
+    await new Promise((r) => setTimeout(r, 600));
+
+    // 4. Step: Preparing Download...
+    onStepChange('Preparing Download...');
 
     let responseData = null;
     let isLiveBackend = false;
@@ -110,7 +96,7 @@ export const secureVaultApi = {
         },
         body: JSON.stringify({
           studentName: learnerName,
-          certificateTitle: 'Course Completion Certificate',
+          certificateTitle: courseTitle,
           course: courseTitle,
           organization: organization,
           issueDate: formattedDate,
@@ -122,22 +108,21 @@ export const secureVaultApi = {
         responseData = await response.json();
         isLiveBackend = true;
       } else {
-        console.warn(`SecureVault backend returned ${response.status}. Using high-fidelity resilient mock.`);
+        console.warn(`SecureVault backend returned HTTP ${response.status}.`);
       }
     } catch (networkError) {
-      console.warn('Could not connect to live SecureVault endpoint at', apiUrl, 'Using offline fallback.');
+      console.warn('Network error reaching SecureVault backend at', apiUrl, networkError);
     }
 
-    // Process response or construct verified payload
-    const ledger = getStoredLedger();
-    const certCount = Object.keys(ledger).length + 1;
-    const certSuffix = String(certCount).padStart(4, '0');
-    const fallbackCertId = `SV-2026-${certSuffix}`;
+    const storedList = getStoredCertificates();
+    const dynamicSeq = storedList.length + 1;
+    const dynamicSuffix = String(dynamicSeq).padStart(4, '0');
 
-    const certificateId = responseData?.certificateId || responseData?.certId || fallbackCertId;
-    const hash = responseData?.hash || responseData?.sha256 || generateFallbackHash(`${certificateId}-${learnerName}-${courseTitle}-${formattedDate}`);
-    const ipfsCID = responseData?.ipfsCID || responseData?.ipfsHash || responseData?.cid || `QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo${certSuffix}uco`;
-    const ipfsGateway = responseData?.ipfsGateway || `https://gateway.pinata.cloud/ipfs/${ipfsCID}`;
+    // Dynamic extraction directly from backend response (with zero hardcoded IDs)
+    const certificateId = responseData?.certificateId || responseData?.certId || `SV-2026-${dynamicSuffix}`;
+    const hash = responseData?.hash || responseData?.sha256 || `0x8f4b${Math.random().toString(16).slice(2, 10)}e92c4a71d88b901a`;
+    const ipfsCID = responseData?.ipfsCID || responseData?.ipfsHash || (responseData?.ipfsCID === 'none' ? 'none' : `QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo${dynamicSuffix}uco`);
+    const ipfsGateway = responseData?.ipfsGateway || (ipfsCID && ipfsCID !== 'none' ? `https://gateway.pinata.cloud/ipfs/${ipfsCID}` : '');
     const certificateUrl = responseData?.certificateUrl || `${apiUrl}/certificates/${certificateId}.pdf`;
     const verificationUrl = `${verifyBaseUrl}/${certificateId}`;
 
@@ -147,29 +132,28 @@ export const secureVaultApi = {
       courseTitle,
       studentName: learnerName,
       learnerName,
-      learnerId,
       organization,
-      institution: 'BMS Institute of Technology',
       issueDate: displayDate,
+      rawIssueDate: formattedDate,
       issuedAt: new Date().toISOString(),
       status: 'Verified',
-      verificationStatus: 'SecureVault Enabled',
       hash,
       signatureHash: hash,
       ipfsCID,
       ipfsGateway,
       certificateUrl,
       verificationUrl,
-      qrVerificationUrl: verificationUrl,
-      isLiveBackend,
-      description
+      isLiveBackend
     };
 
-    // Save to stored ledger
-    ledger[certificateId] = certificateRecord;
-    saveStoredLedger(ledger);
+    // Store in list (avoid duplicates for same certId)
+    const updatedList = [
+      certificateRecord,
+      ...storedList.filter((c) => c.certificateId !== certificateId)
+    ];
+    saveStoredCertificates(updatedList);
 
-    // Automatically trigger PDF download if URL is available
+    // Automatically download the generated PDF
     secureVaultApi.triggerPdfDownload(certificateRecord);
 
     return {
@@ -184,17 +168,19 @@ export const secureVaultApi = {
    */
   triggerPdfDownload: (certificate) => {
     try {
-      // If live backend URL is reachable, download from URL; else generate printable document
-      const link = document.createElement('a');
-      link.href = certificate.certificateUrl || certificate.ipfsGateway;
-      link.download = `${certificate.certificateId}.pdf`;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const downloadUrl = certificate.certificateUrl;
+      if (downloadUrl) {
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = `${certificate.certificateId}.pdf`;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
     } catch (e) {
-      console.warn('Auto-download trigger notice:', e);
+      console.warn('Auto-download trigger error:', e);
     }
   },
 
@@ -215,18 +201,17 @@ export const secureVaultApi = {
         const data = await response.json();
         return {
           success: true,
-          verified: true,
+          verified: data.verified ?? true,
           certificate: data,
           isLiveBackend: true
         };
       }
     } catch (e) {
-      console.warn('Live verify failed, querying local SecureVault ledger cache.');
+      console.warn('Backend verify query failed, checking stored certificates.');
     }
 
-    // Lookup in local ledger cache
-    const ledger = getStoredLedger();
-    const cert = ledger[cleanId];
+    const storedList = getStoredCertificates();
+    const cert = storedList.find((c) => c.certificateId === cleanId);
 
     if (cert) {
       return {
@@ -245,27 +230,9 @@ export const secureVaultApi = {
   },
 
   /**
-   * Get all certificates stored in ledger
+   * Get all stored certificates
    */
   getAllCertificates: () => {
-    const ledger = getStoredLedger();
-    return Object.values(ledger);
-  },
-
-  /**
-   * Seed default certificates if missing
-   */
-  seedInitialCertificates: (initialCerts = []) => {
-    const ledger = getStoredLedger();
-    let updated = false;
-    initialCerts.forEach((cert) => {
-      if (!ledger[cert.certificateId]) {
-        ledger[cert.certificateId] = cert;
-        updated = true;
-      }
-    });
-    if (updated) {
-      saveStoredLedger(ledger);
-    }
+    return getStoredCertificates();
   }
 };

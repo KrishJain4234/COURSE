@@ -4,7 +4,7 @@ import { useLearning } from '../context/LearningContext';
 import { CourseCard } from '../components/common/CourseCard';
 
 export const CourseCatalog = ({ onSelectCourse, onNavigate }) => {
-  const { courses, setActiveCertificateModal } = useLearning();
+  const { courses, generateAndDownloadCertificate } = useLearning();
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedDifficulty, setSelectedDifficulty] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -168,18 +168,7 @@ export const CourseCatalog = ({ onSelectCourse, onNavigate }) => {
             key={course.id}
             course={course}
             onSelectCourse={onSelectCourse}
-            onOpenCertificate={(c) => {
-              setActiveCertificateModal({
-                certificateId: 'EDU-2026-8492',
-                courseTitle: c.name,
-                learnerName: 'Krish Jain',
-                learnerId: 'STU-2026-001',
-                institution: 'BMS Institute of Technology',
-                issueDate: 'August 18, 2026',
-                status: 'Verified',
-                verificationStatus: 'SecureVault Enabled'
-              });
-            }}
+            onOpenCertificate={(c) => generateAndDownloadCertificate(c)}
           />
         ))}
       </div>

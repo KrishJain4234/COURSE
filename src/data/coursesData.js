@@ -7,6 +7,7 @@ export const COURSES_DATA = [
   {
     id: 'ai-fundamentals',
     name: 'Artificial Intelligence Fundamentals',
+    title: 'Artificial Intelligence Fundamentals',
     code: 'CSE-AI-501',
     instructor: 'Dr. Aris Thorne',
     instructorRole: 'Distinguished Professor of Artificial Intelligence, BMSIT',
@@ -17,7 +18,7 @@ export const COURSES_DATA = [
     category: 'Artificial Intelligence',
     rating: 4.9,
     enrolledCount: 1420,
-    credits: '3.0 Academic Credits (BMSIT)',
+    credits: '3.0 Academic Credits',
     defaultProgress: 75,
     tag: 'Accredited Curriculum',
     overview: 'An authoritative foundation in symbolic reasoning, search algorithms, heuristic evaluation, and modern cognitive systems. Designed in collaboration with leading enterprise AI laboratories to bridge academic rigour and industrial readiness.',
@@ -85,6 +86,7 @@ export const COURSES_DATA = [
   {
     id: 'ml-basics',
     name: 'Machine Learning Basics',
+    title: 'Machine Learning Basics',
     code: 'CSE-ML-502',
     instructor: 'Prof. Elena Rostova',
     instructorRole: 'Principal Machine Learning Fellow, Center for Data Intelligence',
@@ -95,7 +97,7 @@ export const COURSES_DATA = [
     category: 'Data Science & ML',
     rating: 4.8,
     enrolledCount: 1890,
-    credits: '4.0 Academic Credits (BMSIT)',
+    credits: '4.0 Academic Credits',
     defaultProgress: 50,
     tag: 'Core Specialization',
     overview: 'A rigorous mathematical and algorithmic exploration of supervised and unsupervised machine learning methods. Covers loss surfaces, gradient descent dynamics, model evaluation metrics, and bias-variance trade-offs in enterprise datasets.',
@@ -163,6 +165,7 @@ export const COURSES_DATA = [
   {
     id: 'blockchain-essentials',
     name: 'Blockchain Essentials',
+    title: 'Blockchain Essentials',
     code: 'CSE-BC-503',
     instructor: 'Marcus Vance',
     instructorRole: 'Principal Cryptographic Architect, Distributed Ledger Institute',
@@ -173,8 +176,8 @@ export const COURSES_DATA = [
     category: 'Decentralized Systems',
     rating: 4.95,
     enrolledCount: 1150,
-    credits: '2.5 Academic Credits (BMSIT)',
-    defaultProgress: 100, // Pre-seeded completed to showcase download flow right away!
+    credits: '2.5 Academic Credits',
+    defaultProgress: 25,
     tag: 'Govt. Skill Initiative',
     overview: 'A deep architectural dive into cryptographic primitives, distributed consensus protocols, smart contract execution runtimes, and zero-knowledge verification in high-trust enterprise environments.',
     learningOutcomes: [
@@ -241,6 +244,7 @@ export const COURSES_DATA = [
   {
     id: 'cyber-security-fundamentals',
     name: 'Cyber Security Fundamentals',
+    title: 'Cyber Security Fundamentals',
     code: 'CSE-SEC-504',
     instructor: 'Sarah Jenkins, CISSP',
     instructorRole: 'CISO Advisor & Executive Director, Cyber Defense Institute',
@@ -251,8 +255,8 @@ export const COURSES_DATA = [
     category: 'Information Security',
     rating: 4.88,
     enrolledCount: 1670,
-    credits: '3.0 Academic Credits (BMSIT)',
-    defaultProgress: 25,
+    credits: '3.0 Academic Credits',
+    defaultProgress: 0,
     tag: 'Industry Standard',
     overview: 'Essential principles of modern enterprise defense, defense-in-depth methodologies, threat modeling, network isolation, identity security, and incident response management.',
     learningOutcomes: [
@@ -319,6 +323,7 @@ export const COURSES_DATA = [
   {
     id: 'cloud-computing-aws',
     name: 'Cloud Computing with AWS',
+    title: 'Cloud Computing with AWS',
     code: 'CSE-AWS-505',
     instructor: 'David K. Chen',
     instructorRole: 'AWS Solutions Architect Fellow & Enterprise Cloud Strategist',
@@ -329,8 +334,8 @@ export const COURSES_DATA = [
     category: 'Cloud Architecture',
     rating: 4.92,
     enrolledCount: 2040,
-    credits: '3.5 Academic Credits (BMSIT)',
-    defaultProgress: 35,
+    credits: '3.5 Academic Credits',
+    defaultProgress: 0,
     tag: 'Enterprise Ready',
     overview: 'Complete architecture curriculum covering AWS Well-Architected Framework, VPC networking, compute autoscaling, serverless microservices, managed databases, and multi-region resilience.',
     learningOutcomes: [
@@ -397,6 +402,7 @@ export const COURSES_DATA = [
   {
     id: 'generative-ai-apps',
     name: 'Generative AI Applications',
+    title: 'Generative AI Applications',
     code: 'CSE-GENAI-506',
     instructor: 'Dr. Sophia Al-Mansoor',
     instructorRole: 'Head of LLM Architecture & Frontier Research Fellow',
@@ -407,7 +413,7 @@ export const COURSES_DATA = [
     category: 'Artificial Intelligence',
     rating: 4.96,
     enrolledCount: 2210,
-    credits: '3.5 Academic Credits (BMSIT)',
+    credits: '3.5 Academic Credits',
     defaultProgress: 0,
     tag: 'Frontier Tech',
     overview: 'Architecting industrial Generative AI systems. Covers Transformer self-attention mathematics, Retrieval-Augmented Generation (RAG), Vector Embeddings, Fine-Tuning (LoRA/QLoRA), and LLM evaluation frameworks.',

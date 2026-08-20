@@ -203,45 +203,52 @@ export const CourseDetails = ({
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <button
                   onClick={() => generateAndDownloadCertificate(course)}
-                  className="btn btn-success"
+                  className="btn btn-success btn-lg"
                   style={{ width: '100%', fontWeight: 700 }}
                 >
                   <Award size={18} />
                   Download Verified Certificate
                 </button>
 
-                <button
-                  onClick={() => {
-                    const cert = issuedCert || {
-                      certificateId: 'SV-2026-0001',
-                      courseTitle: course.name,
-                      learnerName: user?.name || 'Krish Jain',
-                      studentName: user?.name || 'Krish Jain',
-                      learnerId: user?.learnerId || 'STU-2026-001',
-                      organization: 'SkillForge Academy',
-                      institution: user?.institution || 'BMS Institute of Technology',
-                      issueDate: 'August 20, 2026',
-                      status: 'Verified',
-                      verificationStatus: 'SecureVault Enabled'
-                    };
-                    onOpenCertificatePreview(cert);
-                  }}
-                  className="btn btn-sm"
-                  style={{ backgroundColor: 'rgba(255, 255, 255, 0.15)', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.2)' }}
-                >
-                  <ExternalLink size={15} />
-                  View Certificate
-                </button>
+                {issuedCert && (
+                  <button
+                    onClick={() => onOpenCertificatePreview(issuedCert)}
+                    className="btn btn-sm"
+                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.15)', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.2)' }}
+                  >
+                    <ExternalLink size={15} />
+                    View Certificate ({issuedCert.certificateId})
+                  </button>
+                )}
               </div>
             ) : (
-              <button
-                onClick={handleMarkCompleted}
-                className="btn btn-primary"
-                style={{ width: '100%', backgroundColor: '#2563eb' }}
-              >
-                <CheckCircle2 size={18} />
-                Mark Course Completed
-              </button>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <button
+                  onClick={handleMarkCompleted}
+                  className="btn btn-primary"
+                  style={{ width: '100%', backgroundColor: '#2563eb' }}
+                >
+                  <CheckCircle2 size={18} />
+                  Mark Course Completed
+                </button>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    fontSize: '0.75rem',
+                    color: '#cbd5e1',
+                    padding: '4px',
+                    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                    borderRadius: '6px'
+                  }}
+                >
+                  <Lock size={12} />
+                  <span>Certificate unlocks at 100% completion</span>
+                </div>
+              </div>
             )}
 
             <button

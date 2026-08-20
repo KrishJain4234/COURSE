@@ -14,13 +14,21 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLearning } from '../context/LearningContext';
+import { secureVaultApi } from '../services/secureVaultApi';
 import { StatCard } from '../components/common/StatCard';
 import { CourseCard } from '../components/common/CourseCard';
 import { ProgressBar } from '../components/common/ProgressBar';
 
 export const Dashboard = ({ onNavigate, onSelectCourse }) => {
   const { user } = useAuth();
-  const { courses, learningSummary, setActiveCertificateModal, setActiveCertificatePreview } = useLearning();
+  const {
+    courses,
+    learningSummary,
+    certificates,
+    generateAndDownloadCertificate,
+    setActiveCertificateModal,
+    setActiveCertificatePreview
+  } = useLearning();
 
   // Find the primary active in-progress course
   const activeCourse = courses.find((c) => c.progress > 0 && c.progress < 100) || courses[0];
@@ -224,22 +232,83 @@ export const Dashboard = ({ onNavigate, onSelectCourse }) => {
               key={course.id}
               course={course}
               onSelectCourse={onSelectCourse}
-              onOpenCertificate={(c) => {
-                setActiveCertificateModal({
-                  certificateId: 'EDU-2026-8492',
-                  courseTitle: c.name,
-                  learnerName: user?.name,
-                  learnerId: user?.learnerId,
-                  institution: user?.institution,
-                  issueDate: 'August 18, 2026',
-                  status: 'Verified',
-                  verificationStatus: 'SecureVault Enabled'
-                });
-              }}
+              onOpenCertificate={(c) => generateAndDownloadCertificate(c)}
             />
           ))}
         </div>
       </div>
+
+      {/* My Certificates Section on Dashboard */}
+      {certificates.length > 0 && (
+        <div style={{ marginBottom: '36px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Award size={20} color="var(--primary-700)" />
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--slate-900)' }}>
+                My Certificates ({certificates.length})
+              </h2>
+            </div>
+            <button onClick={() => onNavigate('certificates')} className="btn btn-secondary btn-sm">
+              Manage All
+            </button>
+          </div>
+
+          <div className="card" style={{ overflow: 'hidden' }}>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.8125rem' }}>
+                <thead>
+                  <tr style={{ backgroundColor: 'var(--slate-50)', borderBottom: '1px solid var(--slate-200)', color: 'var(--slate-600)', fontSize: '0.75rem', textTransform: 'uppercase' }}>
+                    <th style={{ padding: '12px 18px' }}>Course Name</th>
+                    <th style={{ padding: '12px 18px' }}>Certificate ID</th>
+                    <th style={{ padding: '12px 18px' }}>Issue Date</th>
+                    <th style={{ padding: '12px 18px', textAlign: 'right' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {certificates.slice(0, 3).map((cert) => {
+                    const verifyUrl = cert.verificationUrl || `${secureVaultApi.getVerifyBaseUrl()}/${cert.certificateId}`;
+                    return (
+                      <tr key={cert.certificateId} style={{ borderBottom: '1px solid var(--slate-100)' }}>
+                        <td style={{ padding: '14px 18px', fontWeight: 700, color: 'var(--slate-900)' }}>
+                          {cert.courseTitle || cert.course}
+                        </td>
+                        <td style={{ padding: '14px 18px', fontFamily: 'monospace', fontWeight: 700, color: 'var(--primary-800)' }}>
+                          {cert.certificateId}
+                        </td>
+                        <td style={{ padding: '14px 18px', color: 'var(--slate-600)' }}>
+                          {cert.issueDate || cert.rawIssueDate}
+                        </td>
+                        <td style={{ padding: '14px 18px', textAlign: 'right' }}>
+                          <div style={{ display: 'inline-flex', gap: '8px' }}>
+                            <a
+                              href={verifyUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="btn btn-secondary btn-sm"
+                              style={{ fontSize: '0.75rem' }}
+                            >
+                              <ShieldCheck size={13} />
+                              Verify
+                            </a>
+                            <button
+                              onClick={() => secureVaultApi.triggerPdfDownload(cert)}
+                              className="btn btn-primary btn-sm"
+                              style={{ fontSize: '0.75rem' }}
+                            >
+                              <Download size={13} />
+                              Download Again
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Bottom Row: Academic Deadlines & SecureVault Trust Card */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>

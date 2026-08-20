@@ -9,9 +9,9 @@ import {
   Hash,
   Copy,
   Check,
-  Layers,
   Globe,
-  FileCheck
+  FileText,
+  Lock
 } from 'lucide-react';
 import { secureVaultApi } from '../../services/secureVaultApi';
 
@@ -26,6 +26,7 @@ export const CertificateModal = ({
   if (!certificate && !loadingStep) return null;
 
   const handleCopy = (text, fieldName) => {
+    if (!text) return;
     navigator.clipboard.writeText(text);
     setCopiedField(fieldName);
     setTimeout(() => setCopiedField(null), 2000);
@@ -37,9 +38,9 @@ export const CertificateModal = ({
   if (loadingStep) {
     const steps = [
       'Generating Certificate...',
-      'Registering in SecureVault...',
-      'Creating QR Code...',
-      'Anchoring to IPFS...'
+      'Creating Hash...',
+      'Anchoring to IPFS...',
+      'Preparing Download...'
     ];
 
     const currentStepIndex = steps.indexOf(loadingStep);
@@ -48,12 +49,12 @@ export const CertificateModal = ({
       <div className="modal-backdrop">
         <div
           className="modal-content"
-          style={{ maxWidth: '480px', padding: '36px 32px', textAlign: 'center' }}
+          style={{ maxWidth: '460px', padding: '36px 30px', textAlign: 'center' }}
         >
           <div
             style={{
-              width: '64px',
-              height: '64px',
+              width: '60px',
+              height: '60px',
               borderRadius: '16px',
               backgroundColor: 'var(--primary-50)',
               color: 'var(--primary-700)',
@@ -64,18 +65,18 @@ export const CertificateModal = ({
               border: '2px solid var(--primary-200)'
             }}
           >
-            <ShieldCheck size={36} className="animate-pulse" />
+            <ShieldCheck size={32} className="animate-pulse" />
           </div>
 
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--slate-900)', marginBottom: '8px' }}>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--slate-900)', marginBottom: '6px' }}>
             Issuing SecureVault Credential
           </h3>
           <p style={{ fontSize: '0.8125rem', color: 'var(--slate-500)', marginBottom: '24px' }}>
-            Anchoring your academic achievement into the cryptographic ledger
+            {certificate?.courseTitle || 'Course Certificate'}
           </p>
 
-          {/* Stepper list */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', textAlign: 'left', marginBottom: '24px' }}>
+          {/* Stepper list with exact 4 steps */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', textAlign: 'left', marginBottom: '24px' }}>
             {steps.map((step, idx) => {
               const isPast = idx < currentStepIndex;
               const isCurrent = idx === currentStepIndex || (currentStepIndex === -1 && idx === 0);
@@ -90,13 +91,13 @@ export const CertificateModal = ({
                     padding: '10px 14px',
                     borderRadius: '8px',
                     backgroundColor: isCurrent ? 'var(--primary-50)' : isPast ? '#f0fdf4' : 'var(--slate-50)',
-                    border: isCurrent ? '1px solid var(--primary-200)' : isPast ? '1px solid #bbf7d0' : '1px solid var(--slate-200)'
+                    border: isCurrent ? '1px solid var(--primary-300)' : isPast ? '1px solid #bbf7d0' : '1px solid var(--slate-200)'
                   }}
                 >
                   <div
                     style={{
-                      width: '20px',
-                      height: '20px',
+                      width: '22px',
+                      height: '22px',
                       borderRadius: '50%',
                       backgroundColor: isPast ? 'var(--success-500)' : isCurrent ? 'var(--primary-700)' : 'var(--slate-300)',
                       color: '#ffffff',
@@ -124,7 +125,7 @@ export const CertificateModal = ({
           </div>
 
           <div style={{ fontSize: '0.75rem', color: 'var(--slate-400)' }}>
-            Please wait while the cryptographic signature and IPFS block are anchored...
+            Processing cryptographic signature & IPFS ledger record...
           </div>
         </div>
       </div>
@@ -136,12 +137,12 @@ export const CertificateModal = ({
       <div
         className="modal-content"
         onClick={(e) => e.stopPropagation()}
-        style={{ maxWidth: '600px' }}
+        style={{ maxWidth: '580px' }}
       >
         {/* Header */}
         <div
           style={{
-            padding: '24px 28px',
+            padding: '22px 26px',
             borderBottom: '1px solid var(--slate-200)',
             display: 'flex',
             alignItems: 'center',
@@ -152,8 +153,8 @@ export const CertificateModal = ({
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div
               style={{
-                width: '44px',
-                height: '44px',
+                width: '42px',
+                height: '42px',
                 borderRadius: '10px',
                 backgroundColor: '#f0fdf4',
                 color: 'var(--success-700)',
@@ -163,14 +164,14 @@ export const CertificateModal = ({
                 border: '1px solid #bbf7d0'
               }}
             >
-              <CheckCircle size={26} />
+              <CheckCircle size={24} />
             </div>
             <div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--slate-900)' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--slate-900)' }}>
                 Certificate Successfully Issued
               </h3>
               <p style={{ fontSize: '0.8125rem', color: 'var(--slate-500)' }}>
-                Anchored to SecureVault & IPFS Immutable Storage
+                Anchored to SecureVault & IPFS Decentralized Storage
               </p>
             </div>
           </div>
@@ -191,11 +192,11 @@ export const CertificateModal = ({
         </div>
 
         {/* Modal Body */}
-        <div style={{ padding: '28px' }}>
-          {/* Certificate Course Overview */}
+        <div style={{ padding: '26px' }}>
+          {/* Course Summary */}
           <div
             style={{
-              padding: '16px 20px',
+              padding: '16px',
               backgroundColor: 'var(--slate-50)',
               border: '1px solid var(--slate-200)',
               borderRadius: '10px',
@@ -214,7 +215,7 @@ export const CertificateModal = ({
           </div>
 
           {/* Technical Data Fields */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '24px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
             {/* Certificate ID */}
             <div
               style={{
@@ -259,7 +260,7 @@ export const CertificateModal = ({
             >
               <div style={{ minWidth: 0, flex: 1 }}>
                 <span style={{ fontSize: '0.7rem', color: 'var(--slate-500)', textTransform: 'uppercase', fontWeight: 700, display: 'block' }}>
-                  SHA256 Hash Digest
+                  SHA256 Hash
                 </span>
                 <span
                   style={{
@@ -273,7 +274,7 @@ export const CertificateModal = ({
                   }}
                   title={certificate.hash || certificate.signatureHash}
                 >
-                  {certificate.hash || certificate.signatureHash || '0x8f4be92c4a71d88b901a88b1f5c2...'}
+                  {certificate.hash || certificate.signatureHash}
                 </span>
               </div>
               <button
@@ -299,14 +300,9 @@ export const CertificateModal = ({
               }}
             >
               <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span style={{ fontSize: '0.7rem', color: 'var(--slate-500)', textTransform: 'uppercase', fontWeight: 700 }}>
-                    IPFS CID (Pinata Immutable Anchor)
-                  </span>
-                  <span style={{ fontSize: '0.65rem', backgroundColor: '#e0f2fe', color: '#0369a1', padding: '1px 5px', borderRadius: '3px', fontWeight: 700 }}>
-                    IPFS v1
-                  </span>
-                </div>
+                <span style={{ fontSize: '0.7rem', color: 'var(--slate-500)', textTransform: 'uppercase', fontWeight: 700, display: 'block' }}>
+                  IPFS CID
+                </span>
                 <span
                   style={{
                     fontSize: '0.75rem',
@@ -319,7 +315,7 @@ export const CertificateModal = ({
                   }}
                   title={certificate.ipfsCID}
                 >
-                  {certificate.ipfsCID || 'QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWouco'}
+                  {certificate.ipfsCID || 'none'}
                 </span>
               </div>
               <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
@@ -344,51 +340,11 @@ export const CertificateModal = ({
                 </button>
               </div>
             </div>
-
-            {/* Verification Link */}
-            <div
-              style={{
-                padding: '12px 14px',
-                border: '1px solid var(--slate-200)',
-                borderRadius: '8px',
-                backgroundColor: '#ffffff',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: '10px'
-              }}
-            >
-              <div style={{ minWidth: 0, flex: 1 }}>
-                <span style={{ fontSize: '0.7rem', color: 'var(--slate-500)', textTransform: 'uppercase', fontWeight: 700, display: 'block' }}>
-                  Public Verification Link
-                </span>
-                <span
-                  style={{
-                    fontSize: '0.75rem',
-                    color: 'var(--primary-700)',
-                    display: 'block',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    textDecoration: 'underline'
-                  }}
-                >
-                  {verifyUrl}
-                </span>
-              </div>
-              <button
-                onClick={() => handleCopy(verifyUrl, 'verify')}
-                className="btn btn-secondary btn-sm"
-                style={{ fontSize: '0.75rem', flexShrink: 0 }}
-              >
-                {copiedField === 'verify' ? <><Check size={14} color="var(--success-700)" /> Copied</> : <><Copy size={14} /> Copy</>}
-              </button>
-            </div>
           </div>
 
           {/* Action Buttons */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {/* Verify Certificate Button opening deployed SecureVault URL */}
+            {/* Verify Button */}
             <a
               href={verifyUrl}
               target="_blank"
@@ -397,7 +353,7 @@ export const CertificateModal = ({
               style={{ width: '100%', textDecoration: 'none' }}
             >
               <ShieldCheck size={18} />
-              Verify Certificate on SecureVault
+              Verify Certificate
               <ExternalLink size={15} style={{ marginLeft: '4px' }} />
             </a>
 
@@ -410,7 +366,7 @@ export const CertificateModal = ({
                 style={{ width: '100%' }}
               >
                 <Download size={16} />
-                Download PDF
+                Download Again
               </button>
 
               <button
@@ -421,8 +377,8 @@ export const CertificateModal = ({
                 className="btn btn-light-primary"
                 style={{ width: '100%' }}
               >
-                <FileCheck size={16} />
-                View Full Preview
+                <FileText size={16} />
+                Certificate Preview
               </button>
             </div>
           </div>
