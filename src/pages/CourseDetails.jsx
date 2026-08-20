@@ -18,7 +18,8 @@ import {
   ExternalLink,
   ChevronDown,
   ChevronUp,
-  RefreshCw
+  RefreshCw,
+  Lock
 } from 'lucide-react';
 import { useLearning } from '../context/LearningContext';
 import { useAuth } from '../context/AuthContext';

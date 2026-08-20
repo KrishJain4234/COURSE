@@ -10,7 +10,8 @@ import {
   Sparkles,
   ShieldCheck,
   Calendar,
-  AlertCircle
+  AlertCircle,
+  Download
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLearning } from '../context/LearningContext';
